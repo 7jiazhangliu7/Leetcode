@@ -1,0 +1,50 @@
+public class Solution {
+    public boolean verifyPreorder(int[] preorder) {
+        return solution1(preorder) && solution2(preorder);
+    }
+    
+    public boolean solution1(int[] preorder) {
+        if(preorder == null || preorder.length == 0) {
+            return true;
+        }
+        //用一个stack模拟traversal, 如果遇到大于stack.peek()的点，证明是右子树，pop出所有比他小的点，拿到的就是这个点的parent。
+        //然后所有后边的点都应该大于这个min（上面找到的parent）
+        Stack<Integer> s = new Stack<Integer>();
+        int small = Integer.MIN_VALUE;
+        for(Integer i : preorder) {
+            if(i < small) {
+                return false;
+            }
+            
+            while(!s.isEmpty() && i > s.peek()) {
+                small = s.pop();
+            }
+            
+            s.push(i);
+        }
+        
+        return true;
+    }
+    
+    public boolean solution2(int[] preorder) {
+        if(preorder == null || preorder.length == 0) {
+            return true;
+        }
+        
+        int small = Integer.MIN_VALUE, index = -1;
+        //同上， 用given array模拟stack
+        for(Integer i : preorder) {
+            if(i < small) {
+                return false;
+            }
+            
+            while(index >= 0 && i > preorder[index]) {
+                small = preorder[index--];
+            }
+            
+            preorder[++index] = i;
+        }
+        
+        return true;
+    }
+}
