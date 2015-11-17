@@ -1,0 +1,40 @@
+A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
+
+Find all strobogrammatic numbers that are of length = n.
+
+For example,
+Given n = 2, return ["11","69","88","96"].
+
+//先判断n的奇偶性，如果是奇数，那么中间的数就是0,1,8其中一个。如果是偶数，就是从“”开始
+//然后bases就是一些满足条件的两位数，然后n每次减2，把bases中间插入stobos，直到n < 1了就停止了。
+//ex，n = 5, strobos 就是{0,1,8}, 然后把0,1,8插入{"00", "11", "88", "69", "96"}变成
+//000， 010， 080， 101， 。。。。。。 986，然后用这个结果接着算， 往{"00", "11", "88", "69", "96"}中间插入
+//变成10001， 10101， etc...
+public class Solution {
+    public List<String> findStrobogrammatic(int n) {
+        List<String> strobos = new LinkedList<String>();
+        if(n % 2 == 1) {
+            strobos.add("0");
+            strobos.add("1");
+            strobos.add("8");
+        } else {
+            strobos.add("");
+        }
+        String[] strs = {"00", "11", "88", "69", "96"};
+        List<String> bases = Arrays.asList(strs);
+        
+        int m = bases.size();
+        
+        while(n > 1) {
+            n -= 2;
+            List<String> temp = new LinkedList<String>();
+            for(String strobo : strobos) {
+                for(int i = (n < 2 ? 1 : 0); i < m; i++) {
+                    temp.add(bases.get(i).substring(0,1) + strobo + bases.get(i).substring(1));
+                }
+            }
+            strobos = new LinkedList<String>(temp);
+        }
+        return strobos;
+    }
+}
