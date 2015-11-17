@@ -1,0 +1,50 @@
+Given n nodes labeled from 0 to n - 1 and a list of undirected edges (each edge is a pair of nodes), write a function to check whether these edges make up a valid tree.
+
+For example:
+
+Given n = 5 and edges = [[0, 1], [0, 2], [0, 3], [1, 4]], return true.
+
+Given n = 5 and edges = [[0, 1], [1, 2], [2, 3], [1, 3], [1, 4]], return false.
+
+//这题就是用一个array来存roots，一开始所有的点是自己的root
+//然后对每一对点来说，找到他们的root，如果他俩的root是同一个，那么就说明这个树里有cycle！
+//然后把第二个点的root设置成第一个点的root
+public class Solution {
+    public boolean validTree(int n, int[][] edges) {
+        if(n < 0 || edges == null) {
+            return false;
+        }
+        
+        if(n != edges.length +1) {
+            return false;
+        }
+        
+        int[] roots = new int[n];
+        
+        for(int i = 0; i < n; i++) {
+            roots[i] = i;
+        }
+        
+        for(int i = 0; i < edges.length; i++) {
+            int root1 = findRoot(roots, edges[i][0]);
+            int root2 = findRoot(roots, edges[i][1]);
+            //if two roots are the same, that means they belongs to the same path on this tree
+            // ie, they can connect to each other!! Smart!!
+            if(root1 == root2) {
+                return false;
+            }
+            
+            roots[root2] = root1;
+        }
+        
+        return true;
+    }
+    
+    public int findRoot(int[] roots, int node) {
+        if(roots[node] == node) {
+            return node;
+        } 
+        
+        return findRoot(roots, roots[node]);
+    }
+}
