@@ -1,0 +1,38 @@
+Given a non-empty binary search tree and a target value, find the value in the BST that is closest to the target.
+
+Note:
+Given target value is a floating point.
+You are guaranteed to have only one unique value in the BST that is closest to the target.
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+ //就是一个bst search的过程，途中判断当前点和target的差，如果小于当前记录的最小值，那么更新最小值和result node
+ //然后就该往左子树往左子树，该往右子树往右子树
+public class Solution {
+    public int closestValue(TreeNode root, double target) {
+        double min = Double.MAX_VALUE;
+        int result = Integer.MIN_VALUE;
+        while(root != null) {
+            if(min > Math.abs((double)root.val - target)) {
+                min = Math.abs((double)root.val - target);
+                result = root.val;
+            }
+            if(target > root.val) {
+                root = root.right;
+            } else if (target < root.val) {
+                root = root.left;
+            } else {
+                return root.val;
+            }
+        }
+        
+        return result;
+    }
+}
