@@ -1,0 +1,58 @@
+Given a string s, return all the palindromic permutations (without duplicates) of it. Return an empty list if no palindromic permutation could be form.
+
+For example:
+
+Given s = "aabb", return ["abba", "baab"].
+
+Given s = "abc", return [].
+//先计算一下每个char出现的频率，然后如果奇数个char出现多余1个，表示不可能有palindrome
+//如果只有1个或者没有，则更新mid，mid代表放在中间的string，可能是落单的奇数个char，或者“”
+//然后把所有char个数除以2，因为我们可以生成左半部分加上mid加上左半部分的reverse
+public class Solution {
+    public List<String> generatePalindromes(String s) {
+        List<String> result = new LinkedList<String>();
+        if(s == null || s.length() == 0) {
+            return result;
+        }
+        
+        int[] ascii = new int[256];
+        
+        for(Character c : s.toCharArray()) {
+            ascii[c]++;
+        }
+        
+        int odd = 0;
+        String mid = "";
+        int length = 0;
+        for(int i = 0; i < 256; i++) {
+            if(ascii[i] % 2 == 1) {
+                odd++;
+                if(odd > 1) {
+                    return result;
+                }
+                mid = "" + (char)i;
+            } 
+            ascii[i] /= 2;
+            length += ascii[i];
+        }
+        
+        helper(result, "", ascii, length, mid);
+        return result;
+    }
+    
+    public void helper(List<String> result, String tmp, int[] ascii, int length, String mid) {
+        if(tmp.length() == length) {
+            StringBuilder reverse = new StringBuilder(tmp).reverse();
+            result.add(new String(tmp + mid + reverse));
+            return;
+        }
+        
+        for(int i = 0; i < 256; i++) {
+            if(ascii[i] > 0) {
+                ascii[i]--;
+                helper(result, tmp+(char)i, ascii, length, mid);
+                ascii[i]++;
+            }
+        }
+    }
+}
