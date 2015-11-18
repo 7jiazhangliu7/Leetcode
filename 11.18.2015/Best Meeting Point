@@ -1,0 +1,49 @@
+http://massivealgorithms.blogspot.com/2015/10/leetcode-best-meeting-point-segmentfault.html
+
+A group of two or more people wants to meet and minimize the total travel distance. You are given a 2D grid of values 0 or 1, where each 1 marks the home of someone in the group. The distance is calculated using Manhattan Distance, where distance(p1, p2) = |p2.x - p1.x| + |p2.y - p1.y|.
+
+For example, given three people living at (0,0), (0,4), and (2,2):
+
+1 - 0 - 0 - 0 - 1
+|   |   |   |   |
+0 - 0 - 0 - 0 - 0
+|   |   |   |   |
+0 - 0 - 1 - 0 - 0
+The point (0,2) is an ideal meeting point, as the total travel distance of 2+2+2=6 is minimal. So return 6.
+
+public class Solution {
+    public int minTotalDistance(int[][] grid) {
+        if(grid == null || grid.length == 0 || grid[0].length == 0){
+            return 0;
+        }
+        List<Integer> l1 = new ArrayList<Integer>();
+        List<Integer> l2 = new ArrayList<Integer>();
+        
+        for(int i = 0; i < grid.length; i++) {
+            for(int j = 0; j < grid[0].length; j++) {
+                if(grid[i][j] == 1) {
+                    l1.add(i);
+                    l2.add(j);
+                }
+            }
+        }
+        
+        return getDistance(l1) + getDistance(l2);
+    }
+    
+    //find the distance of all other points to the median of these points on the board
+    public int getDistance(List<Integer> list) {
+        int ret = 0;
+        
+        Collections.sort(list);
+        
+        int start = 0, end = list.size()-1;
+        http://massivealgorithms.blogspot.com/2015/10/leetcode-best-meeting-point-segmentfault.html
+        //这里是计算所有点到这些点的median的距离，因为这个距离是最小值。只需要算一下x的最小值的和加上y的最小值的和
+        while(start < end) {
+            ret += list.get(end--) - list.get(start++);
+        }
+        
+        return ret;
+    }
+}
