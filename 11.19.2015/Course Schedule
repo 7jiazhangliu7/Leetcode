@@ -1,0 +1,80 @@
+There are a total of n courses you have to take, labeled from 0 to n - 1.
+
+Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed as a pair: [0,1]
+
+Given the total number of courses and a list of prerequisite pairs, is it possible for you to finish all courses?
+
+For example:
+
+2, [[1,0]]
+There are a total of 2 courses to take. To take course 1 you should have finished course 0. So it is possible.
+
+2, [[1,0],[0,1]]
+There are a total of 2 courses to take. To take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible.
+
+Note:
+The input prerequisites is a graph represented by a list of edges, not adjacency matrices. Read more about how a graph is represented.
+
+click to show more hints.
+
+Hints:
+This problem is equivalent to finding if a cycle exists in a directed graph. If a cycle exists, no topological ordering exists and therefore it will be impossible to take all courses.
+Topological Sort via DFS - A great video tutorial (21 minutes) on Coursera explaining the basic concepts of Topological Sort.
+
+//拓扑排序的应用
+1. 先构建graph，可以用邻接链表来表示，ex， adj[]
+
+public class Solution {
+    LinkedList<Integer> adj[];
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        if(prerequisites == null || prerequisites.length == 0) {
+            return true;
+        }
+        adj = new LinkedList[numCourses];
+        for (int i=0; i<numCourses; ++i) {
+            adj[i] = new LinkedList();
+        }
+        int[] visited = new int[numCourses];
+        
+        for(int i = 0; i < numCourses; i++) {
+            visited[i] = 0;
+        }
+        
+        for(int i = 0; i < prerequisites.length; i++) {
+            addEdge(prerequisites[i][1], prerequisites[i][0]);
+        }
+        2. 如果在一个没有被访问的点, 检查到了cycle，那么就返回false
+        for(int i = 0; i < numCourses; i++) {
+            if(visited[i] == 0 && topologicalSortHelper(i, visited)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    public void addEdge(int v, int w) {
+        adj[v].add(w);
+    }
+    
+    //helper function帮助检查图中有没有cycle
+    public boolean topologicalSortHelper (int vertex, int[] visited) {
+        visited[vertex] = 1;
+        
+        Iterator<Integer> it = adj[vertex].iterator();
+        Integer i;
+        while(it.hasNext()) {
+        如果在邻接表里有点指向了之前被访问过的点，就说明有环
+            i = it.next();
+            if(visited[i] == 0 && topologicalSortHelper(i, visited)) {
+                return true;
+            } 
+            if(visited[i] == 1) {
+                return true;
+            }
+        }
+        
+        visited[vertex] = 2;
+        return false;
+    }
+}
