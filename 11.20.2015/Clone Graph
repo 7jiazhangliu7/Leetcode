@@ -1,0 +1,65 @@
+Clone an undirected graph. Each node in the graph contains a label and a list of its neighbors.
+
+
+OJ's undirected graph serialization:
+Nodes are labeled uniquely.
+
+We use # as a separator for each node, and , as a separator for node label and each neighbor of the node.
+As an example, consider the serialized graph {0,1,2#1,2#2,2}.
+
+The graph has a total of three nodes, and therefore contains three parts as separated by #.
+
+First node is labeled as 0. Connect node 0 to both nodes 1 and 2.
+Second node is labeled as 1. Connect node 1 to node 2.
+Third node is labeled as 2. Connect node 2 to node 2 (itself), thus forming a self-cycle.
+Visually, the graph looks like the following:
+
+       1
+      / \
+     /   \
+    0 --- 2
+         / \
+         \_/
+         
+/**
+ * Definition for undirected graph.
+ * class UndirectedGraphNode {
+ *     int label;
+ *     List<UndirectedGraphNode> neighbors;
+ *     UndirectedGraphNode(int x) { label = x; neighbors = new ArrayList<UndirectedGraphNode>(); }
+ * };
+ */
+public class Solution {
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if(node == null) {
+            return node;
+        }
+        
+        List<UndirectedGraphNode> nodes = new LinkedList<UndirectedGraphNode>();
+        Map<UndirectedGraphNode,UndirectedGraphNode> hm = new HashMap<UndirectedGraphNode,UndirectedGraphNode>();
+        
+        nodes.add(node);
+        hm.put(node, new UndirectedGraphNode(node.label));
+        
+        int index = 0;
+        //这里bfs整个graph，把所有的点都一一对应放进hashmap里
+        while(index < nodes.size()) {
+            UndirectedGraphNode n = nodes.get(index++);
+            for(UndirectedGraphNode ugn : n.neighbors) {
+                if(!hm.containsKey(ugn)) {
+                    hm.put(ugn, new UndirectedGraphNode(ugn.label));
+                    nodes.add(ugn);
+                }
+            }
+        }
+        //对每一个点来说，在map里找到对应的克隆点，然后把这个点的neighbor克隆给克隆点
+        for(int i = 0; i < nodes.size(); i++) {
+            UndirectedGraphNode tmp = hm.get(nodes.get(i));
+            for(int j = 0; j < nodes.get(i).neighbors.size(); j++) {
+                tmp.neighbors.add(hm.get(nodes.get(i).neighbors.get(j)));
+            }
+        }
+        
+        return hm.get(node);
+    }
+}
